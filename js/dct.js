@@ -46,7 +46,10 @@ function idct(C) {
     return f;
 }
 
-var A = [
+// Função para carregar imagem
+
+
+/*var A = [
     [208, 24, 40, 36, 167],
     [231, 71, 248, 107, 9],
     [32, 140, 245, 234, 217],
@@ -60,5 +63,5 @@ var Arev = idct(dctA);
 
 console.log(dctA)
 console.log(Arev)
-console.log(A.toString() === Arev.toString())
+console.log(A.toString() === Arev.toString())*/
 
