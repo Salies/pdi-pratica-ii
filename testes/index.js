@@ -22,7 +22,10 @@ imgInp.onchange = evt => {
         console.log(imgData)
         toGrayscale(imgData)
         ctx.putImageData(imgData, 0, 0);
-        console.log(toMatrix(imgData))
+        let mtx = toMatrix(imgData)
+        let arrrr = toArray(mtx)
+        console.log(arrrr)
+        console.log(arrrr.length)
     }
 }
 
@@ -38,6 +41,7 @@ function toGrayscale(img) {
 }
 
 // Converte uma imagem (array) para uma matriz
+// Considera que a imagem é cinza!
 function toMatrix(img) {
     let data = img.data, out = [], k = 0;
     for(let i = 0; i < img.width; i++) {
@@ -48,4 +52,12 @@ function toMatrix(img) {
         }
     }
     return out;
+}
+
+// Converte uma matriz de trabalho para um array de dados de um canvas
+function toArray(matrix) {
+    let flat = matrix.flat();
+    for(let i = 0; i < flat.length; i += 4)
+        flat.splice(i + 1, 0, flat[i], flat[i], 255);
+    return Uint8ClampedArray.from(flat);
 }
