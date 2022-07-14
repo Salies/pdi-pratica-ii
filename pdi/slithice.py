@@ -24,9 +24,9 @@
 '''
 
 import numpy as np
-from numba import jit
+from numba import njit
 
-@jit
+@njit
 def normalizar(img, v_max, v_min):
     if (v_max == v_min):
         return

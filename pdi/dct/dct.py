@@ -1,13 +1,13 @@
 import numpy as np
-from numba import jit
+from numba import njit
 
-@jit
+@njit
 def alpha(u, N):
     if(u == 0):
         return np.sqrt(1.0 / N)
     return np.sqrt(2.0 / N)
 
-@jit
+@njit
 def dct(img):
     N = img.shape[0]
     C = np.empty((N, N))
@@ -26,7 +26,7 @@ def dct(img):
                 minval = C[u][v]
     return C, maxval, minval
 
-@jit
+@njit
 def idct(C):
     N = C.shape[0]
     f = np.empty((N, N))
