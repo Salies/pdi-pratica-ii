@@ -5,7 +5,7 @@ from PyQt5.QtGui import QPixmap, QImage
 from PyQt5.QtCore import Qt
 from PIL import Image
 from PIL.ImageQt import ImageQt
-from numpy import array as nparray, transpose
+from numpy import array as nparray
 from ..dct import dct, idct
 from ...slithice import normalizar
 
@@ -70,11 +70,13 @@ class MainWindow(QMainWindow):
     def fazer_dct(self, event):
         self.statusBar().showMessage("Calculando DCT. Aguarde...")
         QApplication.processEvents() # força a atualização da statusBar (senão ela atrasa)
-        C, dct_vmax, dct_vmin = dct(nparray(self.__image1))
-        nnn = normalizar(C, dct_vmax, dct_vmin)
-        self.__label2.setPixmap(QPixmap.fromImage(ImageQt(Image.fromarray(nnn).convert("L"))))
-        self.statusBar().showMessage("")
-        #print(C)
+        self.__C, dct_vmax, dct_vmin = dct(nparray(self.__image1))
+        self.__label2.setPixmap(QPixmap.fromImage(ImageQt(Image.fromarray(normalizar(self.__C, dct_vmax, dct_vmin)).convert("L"))))
+        self.statusBar().showMessage("DCT concluído.")
 
     def fazer_idct(self, event):
-        print("fazer idct")
+        self.statusBar().showMessage("Calculando iDCT. Aguarde...")
+        QApplication.processEvents()
+        self.__image1 = ImageQt(Image.fromarray(idct(self.__C)).convert('L'))
+        self.__label1.setPixmap(QPixmap.fromImage(self.__image1))
+        self.statusBar().showMessage("iDCT concluído.")
