@@ -30,9 +30,9 @@ from numba import jit
 def normalizar(img, v_max, v_min):
     if (v_max == v_min):
         return
-    
+
     out = np.empty(img.shape)
     for i, j in np.ndindex(img.shape):
-        out[i, j] = np.round((img[i, j] - v_min) / ((v_max - v_min) * 255.0))
+        out[i, j] = np.round(((img[i, j] - v_min)*( 255 / (v_max-v_min))))
     
     return out

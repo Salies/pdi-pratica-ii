@@ -1,11 +1,11 @@
 from PyQt5.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QFrame, QMenu, QAction, QFileDialog, QApplication
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QImage
 # esse Qt é o namespace do Qt, com algumas propriedades (números, valores) predefinidos
 # por exemplo o Qt.AlignVCenter em C++ seria Qt::AlignVCenter
 from PyQt5.QtCore import Qt
 from PIL import Image
 from PIL.ImageQt import ImageQt
-from numpy import array as nparray
+from numpy import array as nparray, transpose
 from ..dct import dct, idct
 from ...slithice import normalizar
 
@@ -30,8 +30,8 @@ class MainWindow(QMainWindow):
         # Criando labels pras images
         self.__label1 = QLabel()
         self.__label2 = QLabel()
-        self.__label1.setFixedSize(128, 128)
-        self.__label2.setFixedSize(128, 128)
+        self.__label1.setFixedSize(130, 130)
+        self.__label2.setFixedSize(130, 130)
         self.__label1.setFrameStyle(QFrame.StyledPanel)
         self.__label2.setFrameStyle(QFrame.StyledPanel)
         # Criando os botões pra usar DCT/iDCT
@@ -71,7 +71,8 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage("Calculando DCT. Aguarde...")
         QApplication.processEvents() # força a atualização da statusBar (senão ela atrasa)
         C, dct_vmax, dct_vmin = dct(nparray(self.__image1))
-
+        nnn = normalizar(C, dct_vmax, dct_vmin)
+        self.__label2.setPixmap(QPixmap.fromImage(ImageQt(Image.fromarray(nnn).convert("L"))))
         self.statusBar().showMessage("")
         #print(C)
 
