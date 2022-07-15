@@ -7,7 +7,7 @@ from PIL import Image
 from PIL.ImageQt import ImageQt
 from numpy import array as nparray
 from ..dct import dct, idct
-from ...slithice import normalizar
+from ...slithice import normalizar, passa_baixa_dct, passa_alta_dct
 
 # Classe principal de interface gráfica
 # Como é um programa simples, resolvemos concentrar praticamente todo
@@ -109,11 +109,13 @@ class MainWindow(QMainWindow):
 
     def fazer_passa_baixa(self, event):
         self.setPodeInversa(False)
-        print("passa-baixa")
+        passabaixaimg = Image.fromarray(passa_baixa_dct(nparray(self.__image1), 40))
+        passabaixaimg.show()
 
     def fazer_passa_alta(self, event):
         self.setPodeInversa(False)
-        print("passa-alta")
+        passaaltaimg = Image.fromarray(passa_alta_dct(nparray(self.__image1), 40))
+        passaaltaimg.show()
 
     def pintar_pixel(self, pos):
         if not self.__podeInversa:
