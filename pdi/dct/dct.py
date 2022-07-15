@@ -20,6 +20,7 @@ def dct(img):
                 for y in range(N):
                     sigma += img[x][y] * np.cos((((2 * x) + 1) * u * np.pi) / (2 * N)) * np.cos((((2 * y) + 1) * v * np.pi) / (2 * N))
             C[u][v] = alpha(u, N) * alpha(v, N) * sigma
+            # Precisa disso? O máx não vai ser sempre o [0][0]? Não sei :thinking:
             if(C[u][v] > maxval):
                 maxval = C[u][v]
             if(C[u][v] < minval):

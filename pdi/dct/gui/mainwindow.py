@@ -57,6 +57,11 @@ class MainWindow(QMainWindow):
         centralLayout.addWidget(self.__label1)
         centralLayout.addLayout(btnLayout)
         centralLayout.addWidget(self.__label2)
+        # Desativando botões para impedir operações com lixo
+        self.__btnDCT.setEnabled(False)
+        self.__btniDCT.setEnabled(False)
+        # Define esse atributo pra poder recusar a operação de inserir ruído
+        self.__image2qt = None
         # Setando layouts e outros detalhes da janela
         self.setWindowTitle("PDI -- Transformada Discreta do Cosseno")
         centralWidget.setLayout(centralLayout)
@@ -69,6 +74,13 @@ class MainWindow(QMainWindow):
         pathArquivo = QFileDialog.getOpenFileName(self, "Abrir imagem", "", "Imagens (*.png *.jpg *.bmp)")[0]
         if not pathArquivo:
             return
+        # Limpa o painel 2
+        # Trava o DCT para não ser realizado com lixo
+        # Limpa self.__image2qt pra não pintar lixo
+        self.__label2.clear()
+        self.__btnDCT.setEnabled(True)
+        self.__btniDCT.setEnabled(False)
+        self.__image2qt = None
         # Usa o pillow (PIL, fork) e não o Qt para representar as imagens
         # O Qt meramente as exibe, após uma conversão.
         # Já redimensiona a imagem e a deixa em escala de cinza.
@@ -80,9 +92,13 @@ class MainWindow(QMainWindow):
     def fazer_dct(self, event):
         self.statusBar().showMessage("Calculando DCT. Aguarde...")
         QApplication.processEvents() # força a atualização da statusBar (senão ela atrasa)
-        self.__C, dct_vmax, dct_vmin = dct(nparray(self.__image1))
-        self.__image2qt = ImageQt(Image.fromarray(normalizar(self.__C, dct_vmax, dct_vmin)).convert("L"))
+        # Salva o DCT e o max como atributos -- o DCT pra passar quando o usuário pedir
+        # e o máx pra usar como ruído (garante que o ruído vai ser perceptível quando fizer a inversa)
+        self.__C, self.__dct_vmax, dct_vmin = dct(nparray(self.__image1))
+        self.__image2qt = ImageQt(Image.fromarray(normalizar(self.__C, self.__dct_vmax, dct_vmin)).convert("L"))
         self.__label2.setPixmap(QPixmap.fromImage(self.__image2qt))
+        # Ativa o botão de inversa e mostra a mensagem de conclusão
+        self.__btniDCT.setEnabled(True)
         self.statusBar().showMessage("DCT concluído.")
 
     def fazer_idct(self, event):
@@ -99,7 +115,17 @@ class MainWindow(QMainWindow):
         print("passa-alta")
 
     def pintar_pixel(self, pos):
-        print("pintar o pixel", pos)
+        if not self.__image2qt:
+            return
+        # coloca o ruído na matriz real do DCT
+        # divido por 5 porque senão o ruído fica MUITO forte
+        # x e y vem invertido, inverter aqui
+        self.__C[pos[1], pos[0]] = self.__dct_vmax / 5
+        # mostar o ruído pro usuário (coloca na QImage e atualiza o pixmap da label)
+        # aqui não precisa inverter
+        self.__image2qt.setPixel(pos[0], pos[1], 255)
+        self.__label2.setPixmap(QPixmap.fromImage(self.__image2qt))
+        #print(self.__image2qt.format()) # tem que retornar Indexed8
     
 # Label com mouse tracking, para podermos
 # pintar a posição onde o usuário clicar
@@ -108,9 +134,6 @@ class LabelComTracking(QLabel):
     def __init__(self):
         super().__init__()
         self.setMouseTracking(True)
-
-    #def mouseMoveEvent(self, event):
-    #    print("passando por cima")
 
     def mousePressEvent(self, event):
         self.clicouSignal.emit((event.x(), event.y()))
