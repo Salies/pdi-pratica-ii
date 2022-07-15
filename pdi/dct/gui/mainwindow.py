@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QFrame, QMenu, QAction, QFileDialog, QApplication, QSpinBox, QDialog
-from PyQt5.QtGui import QPixmap, QImage
+from PyQt5.QtGui import QPixmap, QIcon
 # esse Qt é o namespace do Qt, com algumas propriedades (números, valores) predefinidos
 # por exemplo o Qt.AlignVCenter em C++ seria Qt::AlignVCenter
 from PyQt5.QtCore import Qt, pyqtSignal
@@ -8,6 +8,7 @@ from PIL.ImageQt import ImageQt
 from numpy import array as nparray
 from ..dct import dct, idct, passa_baixa_dct, passa_alta_dct
 from ...slithice import normalizar
+from ...sobre import Sobre
 
 # Classe principal de interface gráfica
 # Como é um programa simples, resolvemos concentrar praticamente todo
@@ -21,6 +22,10 @@ class MainWindow(QMainWindow):
         # Criando menuBar
         menubar = self.menuBar()
         menuArquivo = QMenu("Arquivo", self)
+        menuAjuda = QMenu("Ajuda", self)
+        sobre_action = QAction("Sobre", self)
+        sobre_action.triggered.connect(lambda: Sobre('ico/mirana.ico'))
+        menuAjuda.addAction(sobre_action)
         self.__menuOp = QMenu("Operações", self)
         pb_action = QAction("Filtro passa-baixa", self)
         pa_action = QAction("Filtro passa-alta", self)
@@ -33,6 +38,7 @@ class MainWindow(QMainWindow):
         self.__menuOp.addAction(pa_action)
         menubar.addMenu(menuArquivo)
         menubar.addMenu(self.__menuOp)
+        menubar.addMenu(menuAjuda)
         self.__menuOp.setEnabled(False)
         # Criando statusBar
         self.statusBar().showMessage("Abra uma imagem")
@@ -65,6 +71,7 @@ class MainWindow(QMainWindow):
         self.setPodeInversa(False)
         # Setando layouts e outros detalhes da janela
         self.setWindowTitle("PDI -- Transformada Discreta do Cosseno")
+        self.setWindowIcon(QIcon('ico/mirana.ico'))
         centralWidget.setLayout(centralLayout)
         self.setCentralWidget(centralWidget)
 
