@@ -61,7 +61,7 @@ class MainWindow(QMainWindow):
         self.__btnDCT.setEnabled(False)
         self.__btniDCT.setEnabled(False)
         # Define esse atributo pra poder recusar a operação de inserir ruído
-        self.__image2qt = None
+        self.setPodeInversa(False)
         # Setando layouts e outros detalhes da janela
         self.setWindowTitle("PDI -- Transformada Discreta do Cosseno")
         centralWidget.setLayout(centralLayout)
@@ -79,8 +79,7 @@ class MainWindow(QMainWindow):
         # Limpa self.__image2qt pra não pintar lixo
         self.__label2.clear()
         self.__btnDCT.setEnabled(True)
-        self.__btniDCT.setEnabled(False)
-        self.__image2qt = None
+        self.setPodeInversa(False)
         # Usa o pillow (PIL, fork) e não o Qt para representar as imagens
         # O Qt meramente as exibe, após uma conversão.
         # Já redimensiona a imagem e a deixa em escala de cinza.
@@ -98,7 +97,7 @@ class MainWindow(QMainWindow):
         self.__image2qt = ImageQt(Image.fromarray(normalizar(self.__C, self.__dct_vmax, dct_vmin)).convert("L"))
         self.__label2.setPixmap(QPixmap.fromImage(self.__image2qt))
         # Ativa o botão de inversa e mostra a mensagem de conclusão
-        self.__btniDCT.setEnabled(True)
+        self.setPodeInversa(True)
         self.statusBar().showMessage("DCT concluído.")
 
     def fazer_idct(self, event):
@@ -109,13 +108,15 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage("iDCT concluído.")
 
     def fazer_passa_baixa(self, event):
+        self.setPodeInversa(False)
         print("passa-baixa")
 
     def fazer_passa_alta(self, event):
+        self.setPodeInversa(False)
         print("passa-alta")
 
     def pintar_pixel(self, pos):
-        if not self.__image2qt:
+        if not self.__podeInversa:
             return
         # coloca o ruído na matriz real do DCT
         # divido por 5 porque senão o ruído fica MUITO forte
@@ -126,6 +127,10 @@ class MainWindow(QMainWindow):
         self.__image2qt.setPixel(pos[0], pos[1], 255)
         self.__label2.setPixmap(QPixmap.fromImage(self.__image2qt))
         #print(self.__image2qt.format()) # tem que retornar Indexed8
+
+    def setPodeInversa(self, pode):
+        self.__podeInversa = pode
+        self.__btniDCT.setEnabled(pode)
     
 # Label com mouse tracking, para podermos
 # pintar a posição onde o usuário clicar
