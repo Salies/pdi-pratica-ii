@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QFrame, QMenu, QAction, QFileDialog, QApplication
+from PyQt5.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QFrame, QMenu, QAction, QFileDialog, QApplication, QSpinBox, QDialog
 from PyQt5.QtGui import QPixmap, QImage
 # esse Qt é o namespace do Qt, com algumas propriedades (números, valores) predefinidos
 # por exemplo o Qt.AlignVCenter em C++ seria Qt::AlignVCenter
@@ -6,8 +6,8 @@ from PyQt5.QtCore import Qt, pyqtSignal
 from PIL import Image
 from PIL.ImageQt import ImageQt
 from numpy import array as nparray
-from ..dct import dct, idct
-from ...slithice import normalizar, passa_baixa_dct, passa_alta_dct
+from ..dct import dct, idct, passa_baixa_dct, passa_alta_dct
+from ...slithice import normalizar
 
 # Classe principal de interface gráfica
 # Como é um programa simples, resolvemos concentrar praticamente todo
@@ -21,7 +21,7 @@ class MainWindow(QMainWindow):
         # Criando menuBar
         menubar = self.menuBar()
         menuArquivo = QMenu("Arquivo", self)
-        menuOp = QMenu("Operações", self)
+        self.__menuOp = QMenu("Operações", self)
         pb_action = QAction("Filtro passa-baixa", self)
         pa_action = QAction("Filtro passa-alta", self)
         pb_action.triggered.connect(self.fazer_passa_baixa)
@@ -29,10 +29,11 @@ class MainWindow(QMainWindow):
         abrir_action = QAction("Abrir", self)
         abrir_action.triggered.connect(self.abrir)
         menuArquivo.addAction(abrir_action)
-        menuOp.addAction(pb_action)
-        menuOp.addAction(pa_action)
+        self.__menuOp.addAction(pb_action)
+        self.__menuOp.addAction(pa_action)
         menubar.addMenu(menuArquivo)
-        menubar.addMenu(menuOp)
+        menubar.addMenu(self.__menuOp)
+        self.__menuOp.setEnabled(False)
         # Criando statusBar
         self.statusBar().showMessage("Abra uma imagem")
         # Criando labels pras images
@@ -80,6 +81,7 @@ class MainWindow(QMainWindow):
         self.__label2.clear()
         self.__btnDCT.setEnabled(True)
         self.setPodeInversa(False)
+        self.__menuOp.setEnabled(True)
         # Usa o pillow (PIL, fork) e não o Qt para representar as imagens
         # O Qt meramente as exibe, após uma conversão.
         # Já redimensiona a imagem e a deixa em escala de cinza.
@@ -109,13 +111,32 @@ class MainWindow(QMainWindow):
 
     def fazer_passa_baixa(self, event):
         self.setPodeInversa(False)
-        passabaixaimg = Image.fromarray(passa_baixa_dct(nparray(self.__image1), 40))
-        passabaixaimg.show()
+        valDialog = FiltroDialog()
+        valDialog.corteSignal.connect(self.aplica_passa_baixa)
+        valDialog.exec_()
 
     def fazer_passa_alta(self, event):
         self.setPodeInversa(False)
-        passaaltaimg = Image.fromarray(passa_alta_dct(nparray(self.__image1), 40))
-        passaaltaimg.show()
+        valDialog = FiltroDialog()
+        valDialog.corteSignal.connect(self.aplica_passa_alta)
+        valDialog.exec_()
+
+    def aplica_passa_baixa(self, corte):
+        self.aplica_filtro(passa_baixa_dct, corte)
+
+    def aplica_passa_alta(self, corte):
+        self.aplica_filtro(passa_alta_dct, corte)
+
+    def aplica_filtro(self, funcao, corte):
+        self.statusBar().showMessage("Calculando DCT. Aguarde...")
+        QApplication.processEvents()
+        C = dct(nparray(self.__image1))[0]
+        self.statusBar().showMessage("Aplicando filtro e iDCT. Aguarde...")
+        QApplication.processEvents()
+        res = idct(funcao(C, corte))
+        self.__image2qt = ImageQt(Image.fromarray(res).convert("L"))
+        self.__label2.setPixmap(QPixmap.fromImage(self.__image2qt))
+        self.statusBar().showMessage("Filtragem concluída.")
 
     def pintar_pixel(self, pos):
         if not self.__podeInversa:
@@ -144,3 +165,23 @@ class LabelComTracking(QLabel):
 
     def mousePressEvent(self, event):
         self.clicouSignal.emit((event.x(), event.y()))
+
+# Os dialogs do PyQt são kek, tivemos que fazer o nosso
+class FiltroDialog(QDialog):
+    corteSignal = pyqtSignal(int)
+    def __init__(self):
+        super().__init__(None, Qt.WindowSystemMenuHint | Qt.WindowTitleHint)
+        self.setWindowTitle("Corte")
+        layout = QVBoxLayout()
+        okBtn = QPushButton("OK")
+        okBtn.clicked.connect(self.aplica)
+        self.__spBox = QSpinBox()
+        self.__spBox.setMinimum(0)
+        self.__spBox.setMaximum(255)
+        layout.addWidget(self.__spBox)
+        layout.addWidget(okBtn)
+        self.setLayout(layout)
+
+    def aplica(self):
+        self.close()
+        self.corteSignal.emit(self.__spBox.value())
