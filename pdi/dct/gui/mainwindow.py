@@ -6,9 +6,9 @@ from PyQt5.QtCore import Qt, pyqtSignal
 from PIL import Image
 from PIL.ImageQt import ImageQt
 from numpy import array as nparray
-from ..dct import dct, idct, passa_baixa_dct, passa_alta_dct
-from ...slithice import normalizar
-from ...sobre import Sobre
+from pdi.dct.dct import dct, idct, passa_baixa_dct, passa_alta_dct
+from pdi.slithice import normalizar
+from pdi.sobre import Sobre
 
 # Classe principal de interface gráfica
 # Como é um programa simples, resolvemos concentrar praticamente todo
