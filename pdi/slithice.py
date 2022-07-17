@@ -39,38 +39,6 @@ def normalize(img, v_max, v_min):
     
     return out
 
-'''
-void slithice::convolution(const QImage& in, float* kernel, int k_width, int k_height, QImage& out) {
-    out = in.copy(); // keep corners
-
-    const int img_width = in.width(), img_height = in.height(),
-        k_center_j = k_width >> 1, k_center_i = k_height >> 1;
-    int offsetJ = 0, offsetI = 0, lim_j = 0, lim_i = 0, acc_color;
-    uchar* bitsB;
-
-    for (int j = k_center_j; j < img_height - k_center_j; j++) {
-        bitsB = out.scanLine(j);
-        for (int i = k_center_i; i < img_width - k_center_i; i++) {
-            acc_color = 0;
-            for (int mj = 0; mj < k_height; mj++) {
-                // The convolution kernel is mirrored.
-                offsetJ = k_height - mj - 1;
-                lim_j = j + k_center_i - offsetJ;
-                const uchar *bits = in.constScanLine(lim_j);
-                for (int mi = 0; mi < k_width; mi++) {
-                    offsetI = k_width - mi - 1;
-                    lim_i = i + k_center_j - offsetI;
-                    if (lim_j >= 0 && lim_j < img_height && lim_i >= 0 && lim_i < img_width) {
-                        acc_color += bits[lim_i] * kernel[(k_width * offsetJ) + offsetI];
-                    }
-                }
-            }
-            bitsB[i] = acc_color;
-        }
-    }
-}
-'''
-
 # Aplica um filtro qualquer a uma imagem.
 # O parâmetro filter é uma função. Adaptado do código original da mediana:
 # https://github.com/Salies/slithice/blob/main/slithice.cpp#L220
