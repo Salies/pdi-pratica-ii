@@ -4,10 +4,7 @@
     Um port de algumas funções da versão original da biblioteca,
     escrita em C++ para Qt. Esta versão é baseada em arrays da
     biblioteca numpy, e utiliza o numba para acelerar os cáclulos.
-    Os comentários agora estão em Português, mas os nomes de funções
-    e variáveis permanecem em Inglês, para maior legibilidade do código,
-    visto que todas as instruções da linguagem de programação e suas
-    respectivas bibliotecas também são em Inglês.
+    Os comentários e nomes agora estão, na sua maioria, em Português.
 
     Copyright (C) 2022 Daniel Serezane
 
@@ -43,7 +40,7 @@ def normalize(img, v_max, v_min):
 # O parâmetro filter é uma função. Adaptado do código original da mediana:
 # https://github.com/Salies/slithice/blob/main/slithice.cpp#L220
 @njit
-def filter(img, filter, f_width, f_height):
+def filtro(img, filter, f_width, f_height):
     out = img.copy() # copia-se e subistui para manters os cantos originais da imagem
 
     (img_width, img_height) = img.shape
