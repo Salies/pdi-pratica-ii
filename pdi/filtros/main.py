@@ -37,6 +37,7 @@ def filtro_pmedio(vec):
             v_max = vec[i]
     return (v_max + v_min) // 2
 
+# Interface gráfica
 class MainWindow(QMainWindow):
     def __init__ (self):
         super().__init__()
