@@ -4,7 +4,29 @@ from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt
 from PIL import Image
 from PIL.ImageQt import ImageQt
+from numpy import array as nparray
+from numba import njit
 from pdi.sobre import Sobre
+from pdi.slithice import filter
+
+from numpy import array as nparray
+
+# Funções filtro
+@njit
+def filter_max(vec):
+    v_max = vec[0]
+    for i in range(1, len(vec)):
+        if(vec[i] > v_max):
+            v_max = vec[i]
+    return v_max
+
+@njit
+def filter_min(vec):
+    v_min = vec[0]
+    for i in range(1, len(vec)):
+        if(vec[i] < v_min):
+            v_min = vec[i]
+    return v_min
 
 class MainWindow(QMainWindow):
     def __init__ (self):
@@ -32,12 +54,14 @@ class MainWindow(QMainWindow):
         opcoesLayout = QVBoxLayout()
         opcoesLayout.setAlignment(Qt.AlignVCenter)
         opcoesLayout.addWidget(QLabel("Filtros:"))
-        self.__btnMinimo = QPushButton("Mínimo")
-        self.__btnMaximo = QPushButton("Máximo")
-        self.__btnPMedio = QPushButton("Ponto médio")
-        opcoesLayout.addWidget(self.__btnMinimo)
-        opcoesLayout.addWidget(self.__btnMaximo)
-        opcoesLayout.addWidget(self.__btnPMedio)
+        btnMinimo = QPushButton("Mínimo")
+        btnMaximo = QPushButton("Máximo")
+        btnPMedio = QPushButton("Ponto médio")
+        btnMinimo.clicked.connect(self.filtro_minimo)
+        btnMaximo.clicked.connect(self.filtro_maximo)
+        opcoesLayout.addWidget(btnMinimo)
+        opcoesLayout.addWidget(btnMaximo)
+        opcoesLayout.addWidget(btnPMedio)
         centralLayout.addWidget(scroll1)
         centralLayout.addLayout(opcoesLayout)
         centralLayout.addWidget(scroll2)
@@ -55,6 +79,18 @@ class MainWindow(QMainWindow):
         width, height = self.__image1.size
         self.__label1.resize(width, height)
         self.__label1.setPixmap(QPixmap.fromImage(ImageQt(self.__image1)))
+
+    def filtro_maximo(self, event):
+        self.__image2 = Image.fromarray(filter(nparray(self.__image1), filter_max, 3, 3))
+        width, height = self.__image2.size
+        self.__label2.resize(width, height)
+        self.__label2.setPixmap(QPixmap.fromImage(ImageQt(self.__image2)))
+
+    def filtro_minimo(self, event):
+        self.__image2 = Image.fromarray(filter(nparray(self.__image1), filter_min, 3, 3))
+        width, height = self.__image2.size
+        self.__label2.resize(width, height)
+        self.__label2.setPixmap(QPixmap.fromImage(ImageQt(self.__image2)))
 
 app = QApplication(argv)
 app.setAttribute(Qt.AA_DisableWindowContextHelpButton)
