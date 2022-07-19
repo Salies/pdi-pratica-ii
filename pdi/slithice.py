@@ -72,7 +72,7 @@ def filter_image(img, filter, f_width, f_height):
 # Adaptado da função original:
 # https://github.com/Salies/slithice/blob/main/slithice.cpp#L132
 @njit
-def convolution(img, kernel, k_width, k_height, v_max = -(np.inf), v_min = np.inf):
+def conv(img, kernel, k_width, k_height, v_max = -(np.inf), v_min = np.inf):
     out = img.copy() # copia-se e subistui para manters os cantos originais da imagem
 
     (img_width, img_height) = img.shape
