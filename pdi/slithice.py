@@ -4,7 +4,8 @@
     Um port de algumas funções da versão original da biblioteca,
     escrita em C++ para Qt. Esta versão é baseada em arrays da
     biblioteca numpy, e utiliza o numba para acelerar os cáclulos.
-    Os comentários e nomes agora estão, na sua maioria, em Português.
+    Os comentários agora estão em Português. Alguns nomes foram mantidos
+    em Inglês para maior coesão com a linguagem.
 
     Copyright (C) 2022 Daniel Serezane
 
@@ -40,7 +41,7 @@ def normalize(img, v_max, v_min):
 # O parâmetro filter é uma função. Adaptado do código original da mediana:
 # https://github.com/Salies/slithice/blob/main/slithice.cpp#L220
 @njit
-def filtro(img, filter, f_width, f_height):
+def filter_image(img, filter, f_width, f_height):
     out = img.copy() # copia-se e subistui para manters os cantos originais da imagem
 
     (img_width, img_height) = img.shape
@@ -79,7 +80,7 @@ def convolution(img, kernel, k_width, k_height, v_max = -(np.inf), v_min = np.in
     k_center_i = k_height >> 1
 
     for j in range(k_center_j, img_height - k_center_j):
-        for i in range(j_center_i, img_width - j_center_i):
+        for i in range(k_center_i, img_width - k_center_i):
             acc_color = 0
             for mj in range(k_height):
                 offsetJ = k_height - mj - 1
