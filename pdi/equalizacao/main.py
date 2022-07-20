@@ -1,4 +1,4 @@
-from PIL import Image, ImageChops
+from PIL import Image, ImageDraw, ImageFont
 import numpy as np
 from numba import njit
 from pdi.slithice import rgb_para_hsl, hsl_para_rgb, eq_histograma_img
@@ -38,6 +38,10 @@ def equalizar_img_por_l(img):
 
 im = Image.open("imagens/Fig0638(a)(lenna_RGB).tif").convert("RGB")
 im_eq = Image.fromarray(equalizar_img_por_l(np.array(im)).astype(np.uint8))
+
+font = ImageFont.truetype("ttf/NotoSansMono-Bold.ttf", size=24)
+ImageDraw.Draw(im).text((0, 0), 'Original', (255, 255, 255), font=font)
+ImageDraw.Draw(im_eq).text((0, 0), 'Equalizada', (255, 255, 255),  font=font)
 
 im.show()
 im_eq.show()
