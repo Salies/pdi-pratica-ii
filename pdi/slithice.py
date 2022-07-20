@@ -5,7 +5,8 @@
     escrita em C++ para Qt. Esta versão é baseada em arrays da
     biblioteca numpy, e utiliza o numba para acelerar os cáclulos.
     Os comentários agora estão em Português. Alguns nomes foram mantidos
-    em Inglês para maior coesão com a linguagem.
+    em Inglês para maior coesão com a linguagem, ou porquê foram simplesmente
+    mantidos da versão original da biblioteca, em C++.
 
     Copyright (C) 2022 Daniel Serezane
 
@@ -97,3 +98,33 @@ def conv(img, kernel, k_width, k_height, v_max = -(np.inf), v_min = np.inf):
                 v_max = acc_color
     
     return out, v_max, v_min # retorna o máximo e mínimo, pra normalizar depois
+
+@njit
+def gerar_histograma(img):
+    h = np.zeros(256)
+
+    for i, j in np.ndindex(img.shape):
+        h[img[i, j]] += 1
+
+    return h
+
+@njit
+def eq_histograma_img(img):
+    out = img.copy()
+    h = gerar_histograma(img)
+
+    width, height = img.shape
+    freq_acc = 0
+    lut = np.empty(256)
+    escala = 255.0 / (width * height)
+
+    for i in range(256):
+        freq_acc += h[i]
+        lut[i] = max(0,  (freq_acc * escala) - 1)
+
+    h = np.zeros(256)
+    for i, j in np.ndindex(img.shape):
+        out[i, j] = lut[out[i, j]]
+        h[out[i, j]] += 1
+
+    return out
