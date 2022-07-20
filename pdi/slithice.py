@@ -111,12 +111,12 @@ def gerar_histograma(img, n_tons):
 @njit
 def eq_histograma_img(img, n_tons):
     out = img.copy()
-    h = gerar_histograma(img)
+    h = gerar_histograma(img, n_tons)
 
     width, height = img.shape
     freq_acc = 0
     lut = np.empty(n_tons)
-    escala = 240.0 / (width * height)
+    escala = (n_tons - 1) / (width * height)
 
     for i in range(n_tons):
         freq_acc += h[i]
