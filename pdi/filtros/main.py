@@ -1,5 +1,5 @@
 from sys import argv
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QScrollArea, QMenu, QAction, QFileDialog, QSizePolicy
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QScrollArea, QMenu, QAction, QFileDialog
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt
 from PIL import Image
@@ -86,7 +86,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(centralWidget)
 
     def abrir(self, event):
-        pathArquivo = QFileDialog.getOpenFileName(self, "Abrir imagem", "", "Imagens (*.png *.jpg *.bmp)")[0]
+        pathArquivo = QFileDialog.getOpenFileName(self, "Abrir imagem", "", "Imagens (*.png *.jpg *.bmp *.tif)")[0]
         if not pathArquivo:
             return
         self.__btnMinimo.setEnabled(True)

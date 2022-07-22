@@ -79,7 +79,7 @@ class MainWindow(QMainWindow):
     def abrir(self, event):
         # Essa função retorna uma tupla (pathDoArquivo, tipoDoArquivo)
         # Como no nosso caso o arquivo é sempre uma imagem, pego só o path
-        pathArquivo = QFileDialog.getOpenFileName(self, "Abrir imagem", "", "Imagens (*.png *.jpg *.bmp)")[0]
+        pathArquivo = QFileDialog.getOpenFileName(self, "Abrir imagem", "", "Imagens (*.png *.jpg *.bmp *.tif)")[0]
         if not pathArquivo:
             return
         # Limpa o painel 2

@@ -34,7 +34,7 @@ def normalize(img, v_max, v_min):
 
     out = np.empty(img.shape)
     for i, j in np.ndindex(img.shape):
-        out[i, j] = np.round(((img[i, j] - v_min)*( 255 / (v_max-v_min))))
+        out[i, j] = np.round(((img[i, j] - v_min) * ( 255 / (v_max - v_min))))
     
     return out
 

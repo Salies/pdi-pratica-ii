@@ -1,3 +1,20 @@
+''' 
+Este programa é parte dos trabalhos práticos do segundo bimestre 
+da disciplina de Processamento Digital de Imagens,
+ministrada na FCT-UNESP em 2022.
+
+Autores:
+Carlos Eduardo Fernandes de Santana
+Daniel Henrique Serezane Pereira
+
+///
+
+Aula 10.1
+Prática:
+1) Implementar o Laplaciano e o Laplaciano da Gaussiana (LoG) exibindo os dois resultados lado a lado
+2) Normalizar ou Equalizar as imagens resultantes, para uma boa visualização
+'''
+
 from PIL import Image
 from numpy import array as nparray, empty
 from numba import njit
