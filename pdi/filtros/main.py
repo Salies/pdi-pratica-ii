@@ -7,7 +7,7 @@ from PIL.ImageQt import ImageQt
 from numpy import array as nparray
 from numba import njit
 from pdi.sobre import Sobre
-from pdi.slithice import filter_image
+from pdi.slithice import filtra_imagem
 
 # Funções filtro
 @njit
@@ -101,19 +101,19 @@ class MainWindow(QMainWindow):
         self.__label1.setPixmap(QPixmap.fromImage(ImageQt(self.__image1)))
 
     def filtro_maximo(self, event):
-        self.__image2 = Image.fromarray(filter_image(nparray(self.__image1), filtro_max, 3, 3)).convert('L')
+        self.__image2 = Image.fromarray(filtra_imagem(nparray(self.__image1), filtro_max, 3, 3)).convert('L')
         width, height = self.__image2.size
         self.__label2.resize(width, height)
         self.__label2.setPixmap(QPixmap.fromImage(ImageQt(self.__image2)))
 
     def filtro_minimo(self, event):
-        self.__image2 = Image.fromarray(filter_image(nparray(self.__image1), filtro_min, 3, 3)).convert('L')
+        self.__image2 = Image.fromarray(filtra_imagem(nparray(self.__image1), filtro_min, 3, 3)).convert('L')
         width, height = self.__image2.size
         self.__label2.resize(width, height)
         self.__label2.setPixmap(QPixmap.fromImage(ImageQt(self.__image2)))
 
     def filtro_ponto_medio(self, event):
-        self.__image2 = Image.fromarray(filter_image(nparray(self.__image1), filtro_pmedio, 3, 3)).convert('L')
+        self.__image2 = Image.fromarray(filtra_imagem(nparray(self.__image1), filtro_pmedio, 3, 3)).convert('L')
         width, height = self.__image2.size
         self.__label2.resize(width, height)
         self.__label2.setPixmap(QPixmap.fromImage(ImageQt(self.__image2)))

@@ -40,7 +40,7 @@ def normalize(img, v_max, v_min):
 
 # Função filtro simplificada, baseada na convolução (abaixo)
 @njit
-def filter_image(img, filter, fil_w, fil_h):
+def filtra_imagem(img, filtro, fil_w, fil_h):
     img_w, img_h = img.shape
 
     out_w = img_w - fil_w + 1
@@ -50,7 +50,7 @@ def filter_image(img, filter, fil_w, fil_h):
 
     for i in range(out_w):
         for j in range(out_h):
-            out[i][j] = filter(img[i:i + fil_w, j:j + fil_h].flatten())
+            out[i][j] = filtro(img[i:i + fil_w, j:j + fil_h].flatten())
     
     return out
 
