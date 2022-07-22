@@ -38,66 +38,42 @@ def normalize(img, v_max, v_min):
     
     return out
 
-# Aplica um filtro qualquer a uma imagem.
-# O parâmetro filter é uma função. Adaptado do código original da mediana:
-# https://github.com/Salies/slithice/blob/main/slithice.cpp#L220
+# Função filtro simplificada, baseada na convolução (abaixo)
 @njit
-def filter_image(img, filter, f_width, f_height):
-    out = img.copy() # copia-se e subistui para manters os cantos originais da imagem
+def filter_image(img, filter, fil_w, fil_h):
+    img_w, img_h = img.shape
 
-    (img_width, img_height) = img.shape
-    
-    f_center_j = f_width >> 1
-    f_center_i = f_height >> 1
-    vec_f = np.zeros(f_width * f_height) # vetor acumulador de pixels para o filtro
+    out_w = img_w - fil_w + 1
+    out_h = img_h - fil_h + 1
 
-    for j in range(f_center_j, img_height - f_center_j):
-        for i in range(f_center_i, img_width - f_center_i):
-            pos = 0 # posição atual do vetor acumulador de pixels do filtro
-            for mj in range(f_height):
-                # Não sei se aqui isso faz muita diferença ou se só na convolução que faz,
-                # mas vou deixar mesmo assim
-                offsetJ = f_height - mj - 1
-                lim_j = j + f_center_i - offsetJ
-                for mi in range(f_width):
-                    offsetI = f_width - mi - 1
-                    lim_i = i + f_center_j - offsetI
-                    if(lim_j >= 0 and lim_j < img_height and lim_i >= 0 and lim_i < img_width):
-                        vec_f[pos] = img[lim_i][lim_j]
-                        pos += 1
-            out[i][j] = filter(vec_f) # define o pixel como o resultado da filtragem, seja lá qual ela for
+    out = np.empty((out_w, out_h))
+
+    for i in range(out_w):
+        for j in range(out_h):
+            out[i][j] = filter(img[i:i + fil_w, j:j + fil_h].flatten())
     
     return out
 
-# Convolução genérica
-# Adaptado da função original:
-# https://github.com/Salies/slithice/blob/main/slithice.cpp#L132
+# Função convolução simplificada, usando o potencial da linguagem Python
+# Não mantém as bordas da imagem original, como na Slithice C++
+# Ao invés disso, retorna uma imagem com as bordas cortadas
 @njit
-def conv(img, kernel, k_width, k_height, v_max = -(np.inf), v_min = np.inf):
-    out = img.copy() # copia-se e subistui para manters os cantos originais da imagem
+def conv(img, kernel):
+    img_w, img_h = img.shape
+    ker_w, ker_h = kernel.shape
 
-    (img_width, img_height) = img.shape
-    k_center_j = k_width >> 1
-    k_center_i = k_height >> 1
+    # Ao invés de definir o tamanho das bordas,
+    # já define o tamanho da imagem de saída
+    out_w = img_w - ker_w + 1
+    out_h = img_h - ker_h + 1
 
-    for j in range(k_center_j, img_height - k_center_j):
-        for i in range(k_center_i, img_width - k_center_i):
-            acc_color = 0
-            for mj in range(k_height):
-                offsetJ = k_height - mj - 1
-                lim_j = j + k_center_i - offsetJ
-                for mi in range(k_width):
-                    offsetI = k_width - mi - 1
-                    lim_i = i + k_center_j - offsetI
-                    if(lim_j >= 0 and lim_j < img_height and lim_i >= 0 and lim_i < img_width):
-                        acc_color += img[lim_i][lim_j] * kernel[offsetI][offsetJ]
-            out[i][j] = acc_color
-            if(acc_color < v_min):
-                v_min = acc_color
-            if(acc_color > v_max):
-                v_max = acc_color
-    
-    return out, v_max, v_min # retorna o máximo e mínimo, pra normalizar depois
+    out = np.empty((out_w, out_h))
+
+    for i in range(out_w):
+        for j in range(out_h):
+            out[i][j] = np.sum(img[i:i + ker_w, j:j + ker_h] * kernel)
+
+    return out
 
 @njit
 def gerar_histograma(img, n_tons):
