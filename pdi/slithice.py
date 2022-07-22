@@ -46,7 +46,7 @@ def filter_image(img, filter, f_width, f_height):
     out = img.copy() # copia-se e subistui para manters os cantos originais da imagem
 
     (img_width, img_height) = img.shape
-    print
+    
     f_center_j = f_width >> 1
     f_center_i = f_height >> 1
     vec_f = np.zeros(f_width * f_height) # vetor acumulador de pixels para o filtro
