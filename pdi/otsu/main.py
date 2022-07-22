@@ -8,7 +8,7 @@ def otsu(img, l):
     n = img.shape[0] * img.shape[1]
     eta = np.zeros(l)
     for t in range(l):
-        a = limiarizacao(img, t)
+        a = binarizacao(img, t)
         p = gerar_histograma(a, l)
         # p agora diz quanto de cada tom há na imagem
         # Basta então dividir pela quantidade total de pixels
