@@ -163,3 +163,22 @@ def hsl_para_rgb(h, s, l):
     b = hsl_f(4, hh, ss, ll)
 
     return r, g, b
+
+@njit
+def limiarizacao(img, limiar):
+    out = img.copy()
+    for i, j in np.ndindex(img.shape):
+        if (img[i, j] < limiar):
+            out[i, j] = 0
+    return out
+
+# Binarização: agora com o poder do numpy!
+# Faz uma imagem preta, e só pinta de branco os
+# pontos que forem >= ao limiar de binarização.
+@njit
+def binarizacao(img, limiar):
+    out = np.zeros(img.shape)
+    for i, j in np.ndindex(img.shape):
+        if (img[i, j] >= limiar):
+            out[i, j] = 255
+    return out
