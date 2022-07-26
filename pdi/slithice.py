@@ -77,10 +77,10 @@ def conv(img, kernel):
 
 @njit
 def gerar_histograma(img, n_tons):
-    h = np.zeros(n_tons)
+    h = np.zeros(n_tons, dtype=np.int32)
 
     for i, j in np.ndindex(img.shape):
-        h[img[i, j]] += 1
+        h[int(img[i, j])] += 1
 
     return h
 
