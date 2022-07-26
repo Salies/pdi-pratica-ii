@@ -1,10 +1,10 @@
 from PIL import Image
 import numpy as np
 from numba import njit
-from pdi.slithice import gerar_histograma, binarizacao
+from pdi.slithice import gerar_histograma, binarizacao, limiarizacao
 
 # Código baseado em uma versão recente do Gonzalez
-# (salvo em Drive pessoal, não distribuído no repo por questões de direitos autorais)
+# (livro salvo em Drive pessoal, não distribuído no repo por questões de direitos autorais)
 @njit
 def otsu(img, l):
     p = gerar_histograma(img, 256) / img.size
@@ -34,4 +34,4 @@ img = np.array(im)
 limiar = otsu(img, 256)
 print(limiar)
 #print(limiar)
-Image.fromarray(binarizacao(img, limiar)).convert('L').save("otsu_teste.png")
+Image.fromarray(binarizacao(img, limiar)).convert('L').show()
