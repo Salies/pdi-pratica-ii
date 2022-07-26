@@ -7,8 +7,7 @@ from pdi.slithice import gerar_histograma, binarizacao
 # (salvo em Drive pessoal, não distribuído no repo por questões de direitos autorais)
 @njit
 def otsu(img, l):
-    n = img.shape[0] * img.shape[1]
-    p = gerar_histograma(img, 256) / n
+    p = gerar_histograma(img, 256) / img.size
     o_max = -np.inf
     k_ast = 0
     # Para cada tom k possíel
@@ -35,4 +34,4 @@ img = np.array(im)
 limiar = otsu(img, 256)
 print(limiar)
 #print(limiar)
-Image.fromarray(binarizacao(img, limiar)).show()
+Image.fromarray(binarizacao(img, limiar)).convert('L').save("otsu_teste.png")
