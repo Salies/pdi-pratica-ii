@@ -40,7 +40,7 @@ def S(p):
 def zhang_suen(img):
     out = img.copy()
     mar_p1 = [(0, 0)] # pixels marcados para remoção, passo 1 -- não há do while em Python
-    mar_p2 = [(0, 0)]
+    mar_p2 = [(0, 0)] # tem que deixar assim (elemento dummy tupla), senão o numba não jita
     # loopa enquanto houverem pixels marcados em cada um dos passos
     while len(mar_p1) != 0 or len(mar_p2) != 0:
         # Passo 1
