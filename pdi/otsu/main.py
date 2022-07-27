@@ -2,9 +2,12 @@ from PIL import Image
 import numpy as np
 from numba import njit
 from pdi.slithice import gerar_histograma, binarizacao, limiarizacao
+from PyQt5.QtWidgets import QApplication, QDialog, QFileDialog, QPushButton, QHBoxLayout
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import Qt
 
-# Código baseado em uma versão recente do Gonzalez
-# (livro salvo em Drive pessoal, não distribuído no repo por questões de direitos autorais)
+# Otsu
+# Código baseado em uma versão recente do Gonzalez (2020, ISBN 9780982085417)
 @njit
 def otsu(img, l):
     p = gerar_histograma(img, 256) / img.size
@@ -29,9 +32,50 @@ def otsu(img, l):
             k_ast = k
     return k_ast
 
-im = Image.open("outros/otsu-teste/a-imagem-ref.jpg").convert('L')
-img = np.array(im)
-limiar = otsu(img, 256)
-print(limiar)
-#print(limiar)
-Image.fromarray(binarizacao(img, limiar)).convert('1').save("outros/otsu-teste/bin_programa.png")
+# Interface gráfica simples
+# Seletor de operação
+class Seletor(QDialog):
+    def __init__ (self, callback_lim, callback_bin):
+        super().__init__()
+        self.__callback_lim = callback_lim
+        self.__callback_bin = callback_bin
+        self.setWindowTitle("Selecione uma operação")
+        self.setWindowIcon(QIcon('ico/ember.ico'))
+        limBtn = QPushButton("Limiarização")
+        binBtn = QPushButton("Binarização")
+        limBtn.clicked.connect(self.clim)
+        binBtn.clicked.connect(self.cbin)
+        l = QHBoxLayout()
+        l.addWidget(limBtn)
+        l.addWidget(binBtn)
+        self.setLayout(l)
+
+    def cbin(self):
+        self.close()
+        self.__callback_bin()
+
+    def clim(self):
+        self.close()
+        self.__callback_lim()
+
+def main():
+    _ = QApplication([])
+    _.setAttribute(Qt.AA_DisableWindowContextHelpButton)
+
+    pathArquivo = QFileDialog.getOpenFileName(None, "Abrir imagem", "", "Imagens (*.png *.jpg *.bmp *.tif)")[0]
+    if not pathArquivo:
+        return
+    
+    im = Image.open(pathArquivo).convert('L')
+    img = np.array(im)
+    limiar = otsu(img, 256)
+
+    call_lim = lambda: Image.fromarray(limiarizacao(img, limiar)).convert('L').show()
+    call_bin = lambda: Image.fromarray(binarizacao(img, limiar)).convert('1').show()
+
+    s = Seletor(call_lim, call_bin)
+    s.exec_()
+
+
+if __name__ == "__main__":
+    main()
