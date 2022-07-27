@@ -164,21 +164,28 @@ def hsl_para_rgb(h, s, l):
 
     return r, g, b
 
+# ATENÇÃO. Versões mais antigas do Gonzalez usam < aqui ao invés
+# de <=. Como estou comparando meus resultados com o do MATLAB
+# licenciado pela UNESP em 2022, que também implementa com <,
+# adotei esta "nova forma" para que haja coesão.
 @njit
 def limiarizacao(img, limiar):
     out = img.copy()
     for i, j in np.ndindex(img.shape):
-        if (img[i, j] < limiar):
+        if (img[i, j] <= limiar):
             out[i, j] = 0
     return out
 
 # Binarização: agora com o poder do numpy!
 # Faz uma imagem preta, e só pinta de branco os
-# pontos que forem >= ao limiar de binarização.
+# pontos que forem > ao limiar de binarização.
+# NOTA. Mesma coisa que a binarização: versões antigas do Gonzalez
+# sugerem >= e não >. A razão pelo uso de > aqui já foi explicada
+# anteriormente.
 @njit
 def binarizacao(img, limiar):
     out = np.zeros(img.shape)
     for i, j in np.ndindex(img.shape):
-        if (img[i, j] >= limiar):
+        if (img[i, j] > limiar):
             out[i, j] = 255
     return out

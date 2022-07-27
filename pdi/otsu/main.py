@@ -29,9 +29,9 @@ def otsu(img, l):
             k_ast = k
     return k_ast
 
-im = Image.open("imagens/Image_processing_pre_otsus_algorithm.jpg").convert('L')
+im = Image.open("outros/otsu-teste/a-imagem-ref.jpg").convert('L')
 img = np.array(im)
 limiar = otsu(img, 256)
 print(limiar)
 #print(limiar)
-Image.fromarray(binarizacao(img, limiar)).convert('L').show()
+Image.fromarray(binarizacao(img, limiar)).convert('1').save("outros/otsu-teste/bin_programa.png")
