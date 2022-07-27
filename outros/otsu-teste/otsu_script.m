@@ -1,6 +1,7 @@
+% FCT-UNESP -- Processamento Digital de Imagens -- 2022
+% Daniel Henrique Serezane Pereira
+% rodar na pasta onde está o script
 I = imread("imagem-ref.jpg");
 level = graythresh(I);
-level2 = level * 255;
-BW = imbinarize(I, level2 / 255);
-%imshow(BW);
-imwrite(BW, 'bin_matlab2.png', 'png');
+BW = imbinarize(I, level);
+imwrite(BW, 'bin_matlab.png', 'png');
