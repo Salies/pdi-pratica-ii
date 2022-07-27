@@ -13,13 +13,13 @@ def otsu(img, l):
     # Para cada tom k possíel
     for k in range(l):
         P1 = 0
-        for i in range(k):
+        for i in range(k + 1):
             P1 += p[i]
         mg = 0
         for i in range(l):
             mg += i * p[i]
         mk = 0
-        for i in range(k):
+        for i in range(k + 1):
             mk += i * p[i]
         if P1 == 1 or P1 == 0:
             continue
