@@ -1,3 +1,18 @@
+''' 
+Este programa é parte dos trabalhos práticos do segundo bimestre 
+da disciplina de Processamento Digital de Imagens,
+ministrada na FCT-UNESP em 2022.
+
+Autores:
+Carlos Eduardo Fernandes de Santana
+Daniel Henrique Serezane Pereira
+
+///
+
+Aula 10.3
+Prática - Implementar o método de OTSU, para usá-lo na limiarização e binarização, já implementados
+'''
+
 from PIL import Image
 import numpy as np
 from numba import njit
@@ -8,6 +23,7 @@ from PyQt5.QtCore import Qt
 
 # Otsu
 # Código baseado em uma versão recente do Gonzalez (2020, ISBN 9780982085417)
+# pág. 656-657
 @njit
 def otsu(img, l):
     p = gerar_histograma(img, 256) / img.size
