@@ -58,7 +58,7 @@ def zhang_suen(img):
                     mar_p1.append((i, j))
         # Elimina os pixels
         for i, j in mar_p1:
-            out[i, j] = False
+            out[i, j] = False #TODO: substituir por bitwise? peruntar pro prof.
         # Passo 2
         mar_p2 = []
         for i in range(1, img.shape[0] - 1):
