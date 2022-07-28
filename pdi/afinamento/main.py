@@ -2,16 +2,6 @@ from PIL import Image
 import numpy as np
 from numba import njit
 
-'''
-for (int k = -1; k <= 1; k++) {
-    for (int l = -1; l <= 1; l++) {
-        if (0 <= i + k && i + k < height && 0 <= j + l && j + l < width) {
-            array_size++;
-        }
-    }
-}
-'''
-
 @njit
 def vizinhos(i, j, img):
     return [
@@ -58,7 +48,7 @@ def zhang_suen(img):
                     mar_p1.append((i, j))
         # Elimina os pixels
         for i, j in mar_p1:
-            out[i, j] = False #TODO: substituir por bitwise? peruntar pro prof.
+            out[i, j] = False
         # Passo 2
         mar_p2 = []
         for i in range(1, img.shape[0] - 1):
