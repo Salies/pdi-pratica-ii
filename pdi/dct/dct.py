@@ -12,7 +12,6 @@ def dct(img):
     N = img.shape[0]
     C = np.empty((N, N))
     maxval = -np.inf
-    minval = np.inf
     for u in range(N):
         for v in range(N):
             sigma = 0.0
@@ -23,9 +22,7 @@ def dct(img):
             # Precisa disso? O máx não vai ser sempre o [0][0]? Não sei :thinking:
             if(C[u][v] > maxval):
                 maxval = C[u][v]
-            if(C[u][v] < minval):
-                minval = C[u][v]
-    return C, maxval, minval
+    return C, maxval
 
 @njit
 def idct(C):
@@ -58,4 +55,20 @@ def passa_alta_dct(img, r):
         for j in range(r):
             if np.sqrt(i ** 2 + j ** 2) <= r:
                 out[i, j] = 0
+    return out
+
+# Retorna um array clipado -- muito útil para o DCT
+# visto que uma normalização linear produz um resultado muito ruim para visualização.
+@njit
+def normaliza_dct(C):
+    out = np.empty(C.shape, dtype=np.uint8)
+    for i, j in np.ndindex(C.shape):
+        abs_v = np.abs(C[i, j])
+        if(abs_v < 0):
+            out[i, j] = 0
+            continue
+        if(abs_v > 255):
+            out[i, j] = 255
+            continue
+        out[i, j] = abs_v
     return out

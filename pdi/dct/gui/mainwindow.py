@@ -6,8 +6,7 @@ from PyQt5.QtCore import Qt, pyqtSignal
 from PIL import Image
 from PIL.ImageQt import ImageQt
 import numpy as np
-from pdi.dct.dct import dct, idct, passa_baixa_dct, passa_alta_dct
-from pdi.slithice import normalize
+from pdi.dct.dct import dct, idct, passa_baixa_dct, passa_alta_dct, normaliza_dct
 from pdi.sobre import Sobre
 
 # Classe principal de interface gráfica
@@ -103,8 +102,8 @@ class MainWindow(QMainWindow):
         # Salva o DCT e o max como atributos -- o DCT pra passar quando o usuário pedir
         # e o máx pra usar como ruído (garante que o ruído vai ser perceptível quando fizer a inversa)
         self.__C, self.__dct_vmax  = dct(np.array(self.__image1))
-        # Deixa o pillow se virar pra normalizar -- é melhor assim
-        self.__image2qt = ImageQt(Image.fromarray(self.__C).convert("L"))
+        # Clip - "infiel", mas melhor que a normalização linear para visualização
+        self.__image2qt = ImageQt(Image.fromarray(normaliza_dct(self.__C)))
         self.__label2.setPixmap(QPixmap.fromImage(self.__image2qt))
         # Ativa o botão de inversa e mostra a mensagem de conclusão
         self.setPodeInversa(True)
