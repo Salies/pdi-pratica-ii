@@ -64,9 +64,6 @@ def normaliza_dct(C):
     out = np.empty(C.shape, dtype=np.uint8)
     for i, j in np.ndindex(C.shape):
         abs_v = np.abs(C[i, j])
-        if(abs_v < 0):
-            out[i, j] = 0
-            continue
         if(abs_v > 255):
             out[i, j] = 255
             continue
