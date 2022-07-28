@@ -102,7 +102,7 @@ class MainWindow(QMainWindow):
         QApplication.processEvents() # força a atualização da statusBar (senão ela atrasa)
         # Salva o DCT e o max como atributos -- o DCT pra passar quando o usuário pedir
         # e o máx pra usar como ruído (garante que o ruído vai ser perceptível quando fizer a inversa)
-        self.__C, self.__dct_vmax, dct_vmin = dct(np.array(self.__image1))
+        self.__C, self.__dct_vmax  = dct(np.array(self.__image1))
         # Deixa o pillow se virar pra normalizar -- é melhor assim
         self.__image2qt = ImageQt(Image.fromarray(self.__C).convert("L"))
         self.__label2.setPixmap(QPixmap.fromImage(self.__image2qt))
