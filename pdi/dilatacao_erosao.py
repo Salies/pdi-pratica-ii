@@ -67,7 +67,7 @@ class MainWindow(QMainWindow):
     def __init__ (self):
         super().__init__()
         self.setWindowTitle("PDI -- Dilatação e erosão (morfologia)")
-        self.setWindowIcon(QIcon('ico/brewmaster.ico'))
+        self.setWindowIcon(QIcon('ico/nightstalker.ico'))
         im = Image.open("imagens/teste.bmp").convert("1")
         self.__img = np.array(im)
         de_layout = QVBoxLayout()
