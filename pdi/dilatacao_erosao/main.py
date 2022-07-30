@@ -10,51 +10,53 @@ Daniel Henrique Serezane Pereira
 ///
 
 Aula 12
-Prática - Implemente a operação de dilatação e erosão de imagens binárias
+Prática
+Implemente a operação de dilatação e erosão de imagens binárias compare o resultado da erosão com o método de afinamento de Zhang e Suen
 '''
 import numpy as np
+from numba import njit
+from PIL import Image
 
+@njit
 def dilatar(img):
     # Matriz de dilatação
     masc = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]])
     # Cria uma imagem com o mesmo tamanho da original
-    img_dil = np.zeros(img.shape, dtype=np.uint8)
-    # Para cada pixel da imagem original
-    for i in range(img.shape[0]):
-        for j in range(img.shape[1]):
-            img_dil[i, j] = 0 # Pixel preto
-    for i in range(img.shape[0]):
-        for j in range(img.shape[1]):
-            cor = img_dil[i, j]
+    img_dil = np.full(img.shape, False)
+    for x in range(1, img.shape[0] - 1):
+        for y in range(1, img.shape[1] - 1):
+            cor = img[x, y]
             # Para cada vizinho do pixel atual
-            if cor > 0:
-                for ii in range(-1, 1):
-                    for jj in range(-1, 1):
-                        if masc[ii+1, jj+1] == 1:
-                            img_dil[i + ii, j + jj] = 1 # Pixel branco
+            if cor == True:
+                for i in range(-1, 2):
+                    for j in range(-1, 2):
+                        if masc[i + 1, j + 1] == 1:
+                            img_dil[x + i, y+ j] = True # Pixel branco
     return img_dil
 
+@njit
 def erodir(img):
     # Matriz de erosão
     masc = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]])
     # Cria uma imagem com o mesmo tamanho da original
-    img_ero = np.zeros(img.shape, dtype=np.uint8)
-    # Para cada pixel da imagem original
-    for i in range(img.shape[0]):
-        for j in range(img.shape[1]):
-            img_ero[i, j] = 0 # Pixel preto
-    for i in range(img.shape[0]):
-        for j in range(img.shape[1]):
-            cor = img_ero[i, j]
+    img_ero = np.full(img.shape, False)
+    for x in range(1, img.shape[0] - 1):
+        for y in range(1, img.shape[1] - 1):
+            cor = img[x, y]
             # Para cada vizinho do pixel atual
-            if cor > 0:
+            if cor == True:
                 remove = False
-                for ii in range(-1, 1):
-                    for jj in range(-1, 1):
-                        if masc[ii+1, jj+1] == 1 and img_ero[i + ii, j + jj] == 0:
+                for i in range(-1, 2):
+                    for j in range(-1, 2):
+                        if (masc[i + 1, j + 1] == 1) and (img[x + i, y + j] == False):
                             remove = True
                 if remove:
-                    img_ero[i, j] = 0
+                    img_ero[x, y] = False
                 else:
-                    img_ero[i, j] = 1
+                    img_ero[x, y] = True
     return img_ero
+
+im = Image.open("imagens/teste.bmp").convert("1")
+dil = erodir(np.array(im))
+print(dil)
+Image.fromarray(dil).show()
