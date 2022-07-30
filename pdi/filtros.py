@@ -1,3 +1,18 @@
+''' 
+Este programa é parte dos trabalhos práticos do segundo bimestre 
+da disciplina de Processamento Digital de Imagens,
+ministrada na FCT-UNESP em 2022.
+
+Autores:
+Carlos Eduardo Fernandes de Santana
+Daniel Henrique Serezane Pereira
+
+///
+
+Aula 8.1
+PRÁTICA - Implementar os filtros do Mínimo, do Máximo e do Ponto Médio
+'''
+
 from sys import argv
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QScrollArea, QMenu, QAction, QFileDialog
 from PyQt5.QtGui import QIcon, QPixmap
