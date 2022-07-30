@@ -16,6 +16,8 @@ Implemente a operação de dilatação e erosão de imagens binárias compare o 
 import numpy as np
 from numba import njit
 from PIL import Image
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFrame, QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QScrollArea, QMenu, QAction, QFileDialog
+from pdi.zhang_suen import zhang_suen
 
 @njit
 def dilatar(img):
@@ -55,6 +57,30 @@ def erodir(img):
                 else:
                     img_ero[x, y] = True
     return img_ero
+
+'''
+        self.__label1.setFixedSize(130, 130)
+        self.__label2.setFixedSize(130, 130)
+        self.__label1.setFrameStyle(QFrame.StyledPanel)
+        self.__label2.setFrameStyle(QFrame.StyledPanel)
+'''
+
+class MainWindow(QMainWindow):
+    def __init__ (self):
+        super().__init__()
+        de_layout = QVBoxLayout()
+        btn_layout = QHBoxLayout()
+        btnDil = QPushButton("Dilatar")
+        btnEro = QPushButton("Erodir")
+        btn_layout.addWidget(btnDil)
+        btn_layout.addWidget(btnEro)
+        self.__mainImgLabel = QLabel()
+        self.__mainImgLabel.setFixedSize(400, 300)
+        self.__mainImgLabel.setFrameStyle(QFrame.StyledPanel)
+        de_layout.addLayout(btn_layout)
+        de_layout.addWidget(self.__mainImgLabel)
+        zs_layout = QVBoxLayout()
+        zs_layout.addWidget(QLabel("Imagem afinada por Zhang-Suen:"))
 
 im = Image.open("imagens/teste.bmp").convert("1")
 dil = erodir(np.array(im))
