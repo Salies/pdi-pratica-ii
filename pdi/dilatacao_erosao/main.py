@@ -19,7 +19,7 @@ import numpy as np
 from numba import njit
 from PIL import Image
 from PIL.ImageQt import ImageQt
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFrame, QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QScrollArea, QMenu, QAction, QFileDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFrame, QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt
 from pdi.zhang_suen import zhang_suen
