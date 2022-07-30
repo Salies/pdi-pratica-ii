@@ -17,7 +17,6 @@ O algoritmo deve ser aplicado apenas nos pontos de borda, entretanto, pode ser a
 o resultado obtido com este algoritmo será comparado com o resultado obtido pela operação de erosão, visto na próxima aula
 '''
 
-import numpy as np
 from numba import njit
 
 @njit
@@ -35,48 +34,47 @@ def vizinhos(i, j, img):
 
 @njit
 def S(p):
-    aux = np.append(p, p[0]) # coloca o p2 no final
+    p.append(p[0]) # coloca o p2 no final
     s = 0
-    for k in range(len(aux) - 1):
-        if (aux[k], aux[k + 1]) == (False, True):
+    for k in range(len(p) - 1):
+        if (p[k], p[k + 1]) == (False, True):
             s += 1
     return s
 
-# TODO (não necessário): limpar o código (loops -> funções)
+# loop do zhang_suen -- para reutlizar código
+@njit
+def zs_loop(out, idx):
+    mar = []
+    # Ignora pixels na borda da imagem
+    for i in range(1, out.shape[0] - 1):
+        for j in range(1, out.shape[1] - 1):
+            if(out[i, j] == False): # pixels pretos não podem ser de borda
+                continue
+            p = vizinhos(i, j, out)
+            if(sum(p) == 8): # se tem 8 vizinhos brancos não é pixel de borda
+                continue
+            # Se batarem as condições, marcar para eliminação
+            if ((2 <= sum(p) <= 6) and (S(p) == 1) and (p[idx[0]] * p[idx[1]] * p[idx[2]] == 0) and (p[idx[3]] * p[idx[4]] * p[idx[5]] == 0)):
+                # Marca para eliminar -- por que não elimina de uma vez? Porque senão buga a "busca" por pixels de borda.
+                mar.append((i, j))
+    # Elimina os pixels
+    for i, j in mar:
+        out[i, j] = False
+    return len(mar), out
+
 @njit
 def zhang_suen(img):
     out = img.copy()
-    mar_p1 = [(0, 0)] # pixels marcados para remoção, passo 1 -- não há do while em Python
-    mar_p2 = [(0, 0)] # tem que deixar assim (elemento dummy tupla), senão o numba não jita
+    # qtd. de pixels marcados para remoção, passo 1 (p1) e passo 2 (p2)
+    # não há do while em Python, por isso o valor inicial, a ser redefinido
+    mar_p1 = 1
+    mar_p2 = 1
     # loopa enquanto houverem pixels marcados em cada um dos passos
-    while len(mar_p1) != 0 or len(mar_p2) != 0:
-        # Inicializa o array de marcados -- cada ponto é uma tupla de coordenadas
-        mar_p1 = mar_p2 = []
+    while mar_p1 != 0 or mar_p2 != 0:
         # Passo 1
-        # Ignora pixels na borda da imagem
-        for i in range(1, img.shape[0] - 1):
-            for j in range(1, img.shape[1] - 1):
-                if(out[i, j] == False): # pixels pretos não podem ser de borda
-                    continue
-                p = vizinhos(i, j, out)
-                if(sum(p) == 8): # se tem 8 vizinhos brancos não é pixel de borda
-                    continue
-                # Se batarem as condições, marcar para eliminação
-                if ((2 <= sum(p) <= 6) and (S(p) == 1) and (p[0] * p[2] * p[4] == 0) and (p[2] * p[4] * p[6] == 0)):
-                    mar_p1.append((i, j))
-        # Elimina os pixels
-        for i, j in mar_p1:
-            out[i, j] = False
-        # Passo 2 -- mesma coisa, só mudam os vizinhos das condições c) e d) (TODO)
-        for i in range(1, img.shape[0] - 1):
-            for j in range(1, img.shape[1] - 1):
-                if(out[i, j] == False):
-                    continue
-                p = vizinhos(i, j, out)
-                if(sum(p) == 8):
-                    continue
-                if ((2 <= sum(p) <= 6) and (S(p) == 1) and (p[0] * p[2] * p[6] == 0) and (p[0] * p[4] * p[6] == 0)):
-                    mar_p2.append((i, j))
-        for i, j in mar_p2:
-            out[i, j] = False
+        # O segundo parâmetro são os índices dos vizinhos que o passo tem que pegar
+        # É uma otimização simples, visto que é só isso que muda entre os passos do algoritmo (Zhang-Suen)
+        mar_p1, out = zs_loop(out, [0, 2, 4, 2, 4, 6])
+        # Passo 2 -- mesma coisa, só mudam os vizinhos das condições c) e d)
+        mar_p2, out = zs_loop(out, [0, 2, 6, 0, 4, 6])
     return out
